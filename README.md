@@ -1,70 +1,63 @@
-# Getting Started with Create React App
+# 리덕스 기초 학습을 위한 레포지토리입니다.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 220531
 
-## Available Scripts
+# 리덕스의 기본 규칙 3가지
 
-In the project directory, you can run:
+## 1.하나의 애플리케이션에는 하나의 스토어
 
-### `npm start`
+여러개의 스토어도 사용가능하지만 개발 도구를 활용하지 못하기때문에 권장하지 않는다.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 2.상태는 읽기전용이다.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+기존 리액트의 상태값을 변경할 때에도 상태값의 불변성을 지켜주는것과 같은 개념이다.
+불변성을 유지해야하는 이유는 내부적으로 데이터가 변경되는것을 감지하기 위함이다.
 
-### `npm test`
+## 3.변화를 일으키는 함수, 리듀서는 순수한 함수여야 한다.,
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+-리듀서 함수는 이전 상태와, 액션 객체를 피라미터로 받는다. -이전의 상태는 건들이지않고 변화된 상태의 객체를 만들어서 반환한다. -똑같은 피라미터로 호출된 리듀서는 항상 똑같은 결과값을 반환해야만 한다.
 
-### `npm run build`
+# 리덕스를 사용하기 위한 기본 구조
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## store
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+스토어란 액션, 상태값, 리듀서가 들어있는 곳이다.
+하나의 앱에 하나의 스토어를 권장한다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+const store = createStore(reducer);
 
-### `npm run eject`
+## 코드로 정의해줘야하는 것
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 기본 상태
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+리덕스에서 관리해줄 상태값을 정의한다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+const initialState = {id:1,text:'',};
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 액션타입 정의
 
-## Learn More
+리듀서에서 호출될 때 이 액션을 보고 어떤 행동을 할지 구분한다.
+리듀서에 바로 문자열을 넣지않고 변수에 할당하는 이유는 유지보수성을 위함이다.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+const ADD_TEXT = 'ADD_TEXT';
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### 액션 생성함수 정의
 
-### Code Splitting
+액션 객체를 생성해주는 함수다.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+const addText = text => ({type:ADD_TEXT, text});
 
-### Analyzing the Bundle Size
+### 리듀서
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+상태값과 액션 객체를 피라미터르 받아온 뒤
+스위치문을 통해 액션 타입에 따라 실행된다.
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+function reducer(state = initialState, action){
+switch (action.type){
+case ADD_TEXT :
+return{
+...state,
+text:action.text
+}
+}
+}
